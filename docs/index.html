@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Rate synthesised audios</title>
+    <title>Virtual Gestures</title>
     <script src="https://unpkg.com/jspsych@7.2.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-video-button-response@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.0.0"></script>
@@ -26,7 +26,7 @@
 <script>
 
     var data_submit_url = "https://script.google.com/macros/s/AKfycbzcW6-6OCmsuDfbOlzvvFZwqHyNxCpz58wUNR4foQeRsjjQ23R0iLXLP1jKPTlWkI5sFw/exec"
-    var success_url = "https://app.prolific.co/submissions/complete?cc=4F73FA73";
+    var success_url = "https://app.prolific.co/submissions/complete?cc=CZYL0K52"    
     var incompatible_device_url = "https://app.prolific.co/submissions/complete?cc=C1EECYYK";
     var no_concent_url = "https://app.prolific.co/submissions/complete?cc=C1B9QFKV";
 
@@ -40,16 +40,28 @@
         }
     })
 
+    var subject_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+    var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+    var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+    var expvariant = jsPsych.data.getURLVariable('EXPVAR');
+
+    jsPsych.data.addProperties({
+        subject_id: subject_id,
+        study_id: study_id,
+        session_id: session_id,
+        experiment: expvariant
+    });
+
     function get_block_exp1(vidfile) {
   
         var trial = {
             type: jsPsychVideoButtonResponse,
             controls: true,
             stimulus: [vidfile],
-            width: 600,
+            width: 1000,
             response_allowed_while_playing: false,
-            choices: ['1 (Very unnatural)','2','3','4','5 (Very natural)'],
-            prompt: '<p>On a scale from 1 to 5:<br> <b>how <i>natural</i> is the dancing motion?</b><br>I.e. to what extent the movements look like they could be carried out by a dancing human being?</p>',
+            prompt: '<h2>Which character\'s motion do you prefer, taking into account both <b>how natural-looking</b><br>the motion is and <b>how well it matches the speech rhythm and intonation</b>?</h2>',
+            choices: ['clear preference for <b>left</b>','slight preference for <b>left</b>','<b>no</b> preference','slght preference for <b>right</b>','clear preference for <b>right</b>'],
             on_finish: function () {
                 url = data_submit_url;
                 jsPsychSheet.uploadPartialData(url, jsPsych.data.get().csv())
@@ -63,93 +75,63 @@
     <div class="container">
               <div class="jumbotron">
             <ol>
-            <li>In this experiment, you will listen to a number of speech samples from an AI voice and <b>rate how natural they sound</b> on a scale from 1 (Bad) to 5 (Excellent).</li>
-            <li>Each page contains seven different versions of the same spoken sentence. You can listen to the examples in any order and go back and forth as many times as you like. Use this to revise your ratings until you are satisfied. Your responses are anonymous and will be used for academic research on speech synthesis.</li>
-            <li>Since the differences between the examples can be quite subtle, please listen carefully and <b> use headphones and a desktop/laptop computer </b> for this test! Also, please do not participate in this experiment if you have a hearing impairment.</li>
-            <li>This study includes a number of simple <b> attention checks </b> at random points. A few of the audio samples will instruct you to choose a specific number on the rating scale. This allows us to ensure that participants are paying attention during the experiment.</li>
+
+            <li>In this experiment you will see pairs of videos of an avatar gesticulating with its arms and upper body while talking.</li>
+
+            <li>Your task is to compare two avatars with different motion but the same speech, and indicate <b>which you prefer</b>, taking into account 
+                how well it matches the speech rhythm and intonation, and how natural-looking the motion is. Please watch every video in full. 
+            <li>You will indicate your preference using a set of buttons, that will be enabled after watching every video in full.</li>
+            <li>Audio is required for this task; please use headphones.</li>
+            <li>There are occasional <b>attention checks</b> inserted into the task. You must comply with their instructions when you find them or you will be disqualified without pay.</li>
             </ol>
             <p> <center> This test does not collect any personally identifiable information and please send a message on Prolific if you encounter any issues. </center> </p>
+
     </div>
 </div>
 `;
 
-    let systems = [
-        "GT",
-        "Glow",
-        "Tacotron2",
-        "OverFlow",
-        "OverFlow_NoDropout",
-        "OverFlow_NoSample",
-        "NH2",
-    ];
-
-    /*****************
-     *****************
-        End Configurations
-     *****************
-    ******************/
-
-    // Prepare indices for tests
-    // let test_sets = [9, 18, 20, 25, 33, 38, 49, 50, 62, 71]
-
     attn_1 = getRandomArbitrary(8, 12);
     attn_2 = getRandomArbitrary(13, 17);
 
-    indices = randomUnique(41, 16);
-
-    // Prepare trials
-    let pairlist = []
-    let pairs = ['SG_GD','SG_GT','SG_DW']
-    let audios = ['A','B','C','D','E','F','G','H','I']
-    for (i=0;i<pairs.length;i++) {
-        for (j=0;j<3;j++) {
-            pairlist.push(pairs[i])
-        }
-    }
-    pairlist = shuffle(pairlist)
-
-    vids = []
-    for (i=0;i<pairlist.length;i++) {
-        vids.push(audios[i] + "_" + pairlist[i] + ".mp4")
-
-    }
-    console.log(vids)
-    
     let timeline = [];
-    /*
-    for (i = 0; i < indices.length; i++) {
-        filename = "".concat(String(indices[i]));
-        let attn_check = filename.toLocaleLowerCase().includes('attn');
-        timeline.push(get_trial_block(filename, attn_check));
+
+    if (expvariant==1) {
+        console.log("experiment is 1!")
+
+        let pairlist = []
+        //let pairs = ['SG_GD','SG_GT','SG_DW']
+        //let audios = ['A','B','C','D','E','F','G','H','I']
+        let pairs = ["GDDW_000_GD_v13_000", "GDDW_000_GT", "GDDW_000_SG_000", "GD_v13_000_GT", "GD_v13_000_SG_000", "GT_SG_000"]
+        let audios = ["TestSeq001_0", "TestSeq001_1", "TestSeq001_2", "TestSeq001_3", "TestSeq001_4", "TestSeq001_5", "TestSeq001_6"]
+        //let audios = ["TestSeq001_0", "TestSeq001_1", "TestSeq001_2", "TestSeq001_3", "TestSeq001_4", "TestSeq001_5", "TestSeq001_6", "TestSeq002_0", "TestSeq002_1", "TestSeq002_2", "TestSeq002_3", "TestSeq002_4", "TestSeq002_5", "TestSeq002_6", "TestSeq003_0", "TestSeq003_1", "TestSeq003_2", "TestSeq003_3", "TestSeq003_4", "TestSeq003_5", "TestSeq003_6", "TestSeq004_0", "TestSeq004_1", "TestSeq004_2", "TestSeq004_3", "TestSeq004_4", "TestSeq004_5", "TestSeq004_6", "TestSeq004_7", "TestSeq005_0", "TestSeq005_1", "TestSeq005_2", "TestSeq005_3", "TestSeq005_4", "TestSeq006_0", "TestSeq006_1"]
+
+        for (i=0;i<pairs.length;i++) {
+            for (j=0;j<6;j++) {
+                pairlist.push(pairs[i])
+            }
+        }
+        pairlist = shuffle(pairlist)
+
+        vids = []
+        for (i=0;i<audios.length;i++) {
+            var variant = (i%2?"A":"B")
+            var vidfile = 'tsg_comb/' + audios[i] + "_" + pairlist[i] + "_" + variant + ".mp4"
+            timeline.push(get_block_exp1(vidfile))
+            vids.push(vidfile)
+        }
+        console.log(vids)
+        /*
+        timeline.push(get_block_exp1('vid/test1c.mp4'))
+        timeline.push(get_block_exp1('vid/test2c.mp4'))
+        timeline.push(get_block_exp1('vid/test3c.mp4'))
+        timeline.push(get_block_exp1('vid/test4c.mp4'))
+        */
+    } else if (expvariant==2) {
+        console.log("experiment is 2!")
     }
-    */
-   
-    timeline.push(get_block_exp1('vid/test1c.mp4'))
-    timeline.push(get_block_exp1('vid/test2c.mp4'))
-    timeline.push(get_block_exp1('vid/test3c.mp4'))
-    timeline.push(get_block_exp1('vid/test4c.mp4'))
-    
+
     //attn_1_block = get_trial_block('Attn_1', true);
     //attn_2_block = get_trial_block('Attn_2', true);
-
-
-
-    // for(i = 0; i < stimuli_set.length; i += 1) {
-    //     filename = "".concat(String(stimuli_set[i]));
-    //     let attn_check = filename.toLocaleLowerCase().includes('attn');
-    //     timeline.push(get_trial_block(filename, attn_check));
-    // }
-
-
-    var subject_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
-    var study_id = jsPsych.data.getURLVariable('STUDY_ID');
-    var session_id = jsPsych.data.getURLVariable('SESSION_ID');
-
-    jsPsych.data.addProperties({
-        subject_id: subject_id,
-        study_id: study_id,
-        session_id: session_id
-    });
 
     let end_test = {
         type: jsPsychHtmlKeyboardResponse,
