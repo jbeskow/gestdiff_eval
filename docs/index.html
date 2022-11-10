@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Virtual Gestures</title>
+    <title>Virtual Gesturing</title>
     <script src="https://unpkg.com/jspsych@7.2.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-video-button-response@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.0.0"></script>
@@ -25,10 +25,10 @@
 <body></body>
 <script>
 
-    var data_submit_url = "https://script.google.com/macros/s/AKfycbzcW6-6OCmsuDfbOlzvvFZwqHyNxCpz58wUNR4foQeRsjjQ23R0iLXLP1jKPTlWkI5sFw/exec"
-    var success_url = "https://app.prolific.co/submissions/complete?cc=CZYL0K52"    
-    var incompatible_device_url = "https://app.prolific.co/submissions/complete?cc=C1EECYYK";
-    var no_concent_url = "https://app.prolific.co/submissions/complete?cc=C1B9QFKV";
+    var data_submit_url = "https://script.google.com/macros/s/AKfycbzcW6-6OCmsuDfbOlzvvFZwqHyNxCpz58wUNR4foQeRsjjQ23R0iLXLP1jKPTlWkI5sFw/exec";
+    var success_url = "https://app.prolific.co/submissions/complete?cc=CZYL0K52";    
+    var incompatible_device_url = "https://app.prolific.co/submissions/complete?cc=C1LQ71PJ";
+    var no_concent_url = "https://app.prolific.co/submissions/complete?cc=CORSE8ZV";
 
     var jsPsych = initJsPsych({
         show_progress_bar: true,
@@ -71,24 +71,6 @@
     }
  
 
-    const instructions = `
-    <div class="container">
-              <div class="jumbotron">
-            <ol>
-
-            <li>In this experiment you will see pairs of videos of an avatar gesticulating with its arms and upper body while talking.</li>
-
-            <li>Your task is to compare two avatars with different motion but the same speech, and indicate <b>which you prefer</b>, taking into account 
-                how well it matches the speech rhythm and intonation, and how natural-looking the motion is. Please watch every video in full. 
-            <li>You will indicate your preference using a set of buttons, that will be enabled after watching every video in full.</li>
-            <li>Audio is required for this task; please use headphones.</li>
-            <li>There are occasional <b>attention checks</b> inserted into the task. You must comply with their instructions when you find them or you will be disqualified without pay.</li>
-            </ol>
-            <p> <center> This test does not collect any personally identifiable information and please send a message on Prolific if you encounter any issues. </center> </p>
-
-    </div>
-</div>
-`;
 
     attn_1 = getRandomArbitrary(8, 12);
     attn_2 = getRandomArbitrary(13, 17);
@@ -98,9 +80,26 @@
     if (expvariant==1) {
         console.log("experiment is 1!")
 
+
+        const instructions = `
+    <div class="container">
+              <div class="jumbotron">
+            <ol>
+
+            <li>In this experiment you will see pairs of videos of animated characters that gesticulate while talking.</li>
+            <li>Your task is to compare two characters with different motion but the same speech, and indicate <b>which one you prefer</b>, taking into account 
+                how well the gestures match the speech rhythm and intonation, and how natural-looking the motion is. Please watch every video in full. 
+            <li>You will indicate your preference using a set of buttons, that will be enabled after watching every video in full.</li>
+            <li>Audio is required for this task; please use headphones.</li>
+            <li>There are occasional <b>attention checks</b> inserted into the task. You must comply with their instructions when you find them or you will be disqualified without pay.</li>
+            </ol>
+            <p> <center> This test does not collect any personally identifiable information and please send a message on Prolific if you encounter any issues. </center> </p>
+    </div>
+</div>
+`;
+
+
         let pairlist = []
-        //let pairs = ['SG_GD','SG_GT','SG_DW']
-        //let audios = ['A','B','C','D','E','F','G','H','I']
         let pairs = ["GDDW_000_GD_v13_000", "GDDW_000_GT", "GDDW_000_SG_000", "GD_v13_000_GT", "GD_v13_000_SG_000", "GT_SG_000"]
         let audios = ["TestSeq001_0", "TestSeq001_1", "TestSeq001_2", "TestSeq001_3", "TestSeq001_4", "TestSeq001_5", "TestSeq001_6"]
         //let audios = ["TestSeq001_0", "TestSeq001_1", "TestSeq001_2", "TestSeq001_3", "TestSeq001_4", "TestSeq001_5", "TestSeq001_6", "TestSeq002_0", "TestSeq002_1", "TestSeq002_2", "TestSeq002_3", "TestSeq002_4", "TestSeq002_5", "TestSeq002_6", "TestSeq003_0", "TestSeq003_1", "TestSeq003_2", "TestSeq003_3", "TestSeq003_4", "TestSeq003_5", "TestSeq003_6", "TestSeq004_0", "TestSeq004_1", "TestSeq004_2", "TestSeq004_3", "TestSeq004_4", "TestSeq004_5", "TestSeq004_6", "TestSeq004_7", "TestSeq005_0", "TestSeq005_1", "TestSeq005_2", "TestSeq005_3", "TestSeq005_4", "TestSeq006_0", "TestSeq006_1"]
@@ -120,12 +119,7 @@
             vids.push(vidfile)
         }
         console.log(vids)
-        /*
-        timeline.push(get_block_exp1('vid/test1c.mp4'))
-        timeline.push(get_block_exp1('vid/test2c.mp4'))
-        timeline.push(get_block_exp1('vid/test3c.mp4'))
-        timeline.push(get_block_exp1('vid/test4c.mp4'))
-        */
+  
     } else if (expvariant==2) {
         console.log("experiment is 2!")
     }
