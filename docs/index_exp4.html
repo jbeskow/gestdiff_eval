@@ -48,10 +48,10 @@
         subject_id: subject_id,
         study_id: study_id,
         session_id: session_id,
-        experiment: 3
+        experiment: 4
     });
 
-    function get_block_exp1(vidfile) {
+    function get_block_exp4(vidfile,prompt) {
   
         var trial = {
             type: jsPsychVideoButtonResponse,
@@ -59,8 +59,8 @@
             stimulus: [vidfile],
             width: 1000,
             response_allowed_while_playing: false,
-            prompt: '<h2>Which character\'s motion do you prefer, taking into account both <b>how natural-looking</b><br>the motion is and <b>how well it matches the speech rhythm and intonation</b>?</h2>',
-            choices: ['clear preference for <b>left</b>','slight preference for <b>left</b>','<b>no</b> preference','slght preference for <b>right</b>','clear preference for <b>right</b>'],
+            prompt: prompt,
+            choices: ['clearly the left one','probably the left one','i can not tell','prbably the right one', 'clearly the right one'],
             on_finish: function () {
                 url = data_submit_url;
                 jsPsychSheet.uploadPartialData(url, jsPsych.data.get().csv())
@@ -79,13 +79,11 @@
 <div class="container">
             <div class="jumbotron">
         <ol>
-
-        <li>In this experiment you will see pairs of videos of animated characters that gesticulate while talking.</li>
-        <li>Your task is to compare two characters with different motion but the same speech, and indicate <b>which one you prefer</b>, taking into account 
-            how well the gestures match the speech rhythm and intonation, and how natural-looking the motion is. Please watch every video in full. 
+        <li>In this experiment you will see pairs of videos of animated characters that move and gesticulate while talking, but <b>the videos are silent</b>.</li>
+        <li>The characters will according to a given style, e.g. HAPPY or ANGRY.
+        <li>Your task is to compare two characters, and indicate which character\'s movements best matches the given <b>style</b>.
+            Please watch every video in full. 
         <li>You will indicate your preference using a set of buttons, that will be enabled after watching every video in full.</li>
-        <li>Audio is required for this task; please use headphones.</li>
-        <li>There are occasional <b>attention checks</b> inserted into the task. You must comply with their instructions when you find them or you will be disqualified without pay.</li>
         </ol>
         <p> <center> This test does not collect any personally identifiable information and please send a message on Prolific if you encounter any issues. </center> </p>
 </div>
@@ -95,33 +93,91 @@
 
     let pairlist = []
     let pairs = ['GDS-ZE','GDSg1p5-GDS','GDSg1p5-ZE'] //["GDS_000-GT","GDS_000-ZE","GT-ZE"]
-    let audios = ['004_Neutral_3_x_1_0_1', '004_Neutral_3_x_1_0_2', '004_Neutral_3_x_1_0_3', '004_Neutral_3_x_1_0_5', '004_Neutral_3_x_1_0_8', '005_Neutral_4_x_1_0_1', '005_Neutral_4_x_1_0_2', '005_Neutral_4_x_1_0_3', '005_Neutral_4_x_1_0_5', '005_Neutral_4_x_1_0_6', '005_Neutral_4_x_1_0_7', '005_Neutral_4_x_1_0_8']
+    let audios = ['004_Neutral_3_x_1_0_1', '004_Neutral_3_x_1_0_2', '004_Neutral_3_x_1_0_3', '004_Neutral_3_x_1_0_5', '004_Neutral_3_x_1_0_8', '005_Neutral_4_x_1_0_1', '005_Neutral_4_x_1_0_2', '005_Neutral_4_x_1_0_3', '005_Neutral_4_x_1_0_5']
+    // '005_Neutral_4_x_1_0_6', '005_Neutral_4_x_1_0_7', '005_Neutral_4_x_1_0_8']
     let styles = ['Happy','Angry','Old','Speech']
 
     let attn_1 = getRandomArbitrary(4,10);
     let attn_2 = getRandomArbitrary(13,18);
-    let videodir = 'zeg_style_comb'
+    let videodir = 'zeg_style_silent'
 
     for (i=0;i<pairs.length;i++) {
-        for (j=0;j<styles.length;j++) {
-            pairlist.push(styles[j] + '-' + pairs[i])
+        for (j=0;j<3;j++) {
+            pairlist.push(pairs[i])
         }
     }
-    pairlist = shuffle(pairlist)
     console.log(audios.length)
     console.log(pairlist.length)
     
     vids = []
+    timeline_happy = []
+    timeline_angry = []
+    timeline_speech = []
+    timeline_old = []
+    
+    instr_speech = '<p>Which of the two clips looks most like <b>a person giving a speech to the public</b>?<p>'
+    instr_old = '<p>Which of the two clips looks most like <b>an old person</b>?</p>'
+    instr_angry = '<p>Which of the two clips looks most like <b>the person is angry</b>?</p>'
+    instr_happy = '<p>Which of the two clips looks most like <b>the person is happy</b>?</p>'
+
+
+    pairlist = shuffle(pairlist)
     for (i=0;i<audios.length;i++) {
         var variant = (i%2?"A":"B")
-        var vidfile = videodir + '/' + audios[i] + "_" + pairlist[i] + "-" + variant + ".mp4"
-        timeline.push(get_block_exp1(vidfile))
+        var vidfile = videodir + '/' + audios[i] + '_Happy-' + pairlist[i] + "-" + variant + ".mp4"
+        timeline_happy.push(get_block_exp4(vidfile,instr_happy))
         vids.push(vidfile)
     }
 
-    attn_1_block = get_block_exp1('attn/attention3.mp4')
-    attn_2_block = get_block_exp1('attn/attention4.mp4')
+    pairlist = shuffle(pairlist)
+    for (i=0;i<audios.length;i++) {
+        var variant = (i%2?"A":"B")
+        var vidfile = videodir + '/' + audios[i] + '_Angry-' + pairlist[i] + "-" + variant + ".mp4"
+        timeline_angry.push(get_block_exp4(vidfile,instr_angry))
+        vids.push(vidfile)
+    }
+    pairlist = shuffle(pairlist)
+    for (i=0;i<audios.length;i++) {
+        var variant = (i%2?"A":"B")
+        var vidfile = videodir + '/' + audios[i] + '_Speech-' + pairlist[i] + "-" + variant + ".mp4"
+        timeline_speech.push(get_block_exp4(vidfile,instr_speech))
+        vids.push(vidfile)
+    }
+    pairlist = shuffle(pairlist)
+    for (i=0;i<audios.length;i++) {
+        var variant = (i%2?"A":"B")
+        var vidfile = videodir + '/' + audios[i] + '_Old-' + pairlist[i] + "-" + variant + ".mp4"
+        timeline_old.push(get_block_exp4(vidfile,instr_old))
+        vids.push(vidfile)
+    }
+
+    attn_1_block = get_block_exp4('attn/attention3.mp4',instr_happy)
+    attn_2_block = get_block_exp4('attn/attention4.mp4',instr_angry)
     console.log(vids)
+
+    let style_instruction_happy = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: [
+            '<p>In the following videos clips, each one containing two characters, you are going to answer the following question:</p>' + instr_happy + 
+                   '<p>Press any key to continue.</p>']
+    };
+
+    let style_instruction_angry = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: ['In the following three videos, you are going to judge which one looks most angry']
+    };
+
+    let style_instruction_speech = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: ['In the following three videos, you are going to judge which one looks most speech']
+    };
+
+    let style_instruction_old = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: ['In the following three videos, you are going to judge which one looks most old']
+    };
+
+
 
     let end_test = {
         type: jsPsychHtmlKeyboardResponse,
@@ -203,12 +259,18 @@
         }
     };
 
-
-    var timeline_all = [browser_check, instruction_screen, inital_confirm_headpdhones];
-    timeline_all = timeline_all.concat(jsPsych.randomization.shuffle(timeline));
+    var timeline_all = [browser_check, instruction_screen];
+    timeline_all.push(style_instruction_happy)
+    timeline_all = timeline_all.concat(jsPsych.randomization.shuffle(timeline_happy))
+    timeline_all.push(style_instruction_angry)
+    timeline_all = timeline_all.concat(jsPsych.randomization.shuffle(timeline_happy))
+    timeline_all.push(style_instruction_speech)
+    timeline_all = timeline_all.concat(jsPsych.randomization.shuffle(timeline_speech))
+    timeline_all.push(style_instruction_old)
+    timeline_all = timeline_all.concat(jsPsych.randomization.shuffle(timeline_old))
     timeline_all.splice(attn_1, 0, attn_1_block);
     timeline_all.splice(attn_2, 0, attn_2_block);
-    timeline_all = timeline_all.concat([confirm_headpdhones, end_test]);
+    timeline_all = timeline_all.concat([end_test]);
 
     jsPsych.run(timeline_all);
 </script>
