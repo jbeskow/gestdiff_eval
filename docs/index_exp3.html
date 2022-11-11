@@ -94,13 +94,18 @@
 
 
     let pairlist = []
-    let pairs = ["GDS_000-GT","GDS_000-ZE","GT-ZE"]
-    let audios = ["004_Neutral_3_x_1_0_0", "004_Neutral_3_x_1_0_1", "004_Neutral_3_x_1_0_2", "004_Neutral_3_x_1_0_3", "004_Neutral_3_x_1_0_4", "004_Neutral_3_x_1_0_5", "004_Neutral_3_x_1_0_6", "004_Neutral_3_x_1_0_7", "004_Neutral_3_x_1_0_8", "005_Neutral_4_x_1_0_0", "005_Neutral_4_x_1_0_1", "005_Neutral_4_x_1_0_2", "005_Neutral_4_x_1_0_3", "005_Neutral_4_x_1_0_4", "005_Neutral_4_x_1_0_5", "005_Neutral_4_x_1_0_6", "005_Neutral_4_x_1_0_7", "005_Neutral_4_x_1_0_8"]
+    let pairs = ['GDS-ZE','GDSg1p5-GDS','GDSg1p5-ZE']
+    let audios = ["004_Neutral_3_x_1_0_1_Happy", "004_Neutral_3_x_1_0_2_Happy", "004_Neutral_3_x_1_0_3_Happy", "004_Neutral_3_x_1_0_5_Happy", "004_Neutral_3_x_1_0_8_Happy", "005_Neutral_4_x_1_0_1_Happy", "005_Neutral_4_x_1_0_2_Happy", "005_Neutral_4_x_1_0_3_Happy", "005_Neutral_4_x_1_0_5_Happy",
+    "004_Neutral_3_x_1_0_1_Angry", "004_Neutral_3_x_1_0_2_Angry", "004_Neutral_3_x_1_0_3_Angry", "004_Neutral_3_x_1_0_5_Angry", "004_Neutral_3_x_1_0_8_Angry", "005_Neutral_4_x_1_0_1_Angry", "005_Neutral_4_x_1_0_2_Angry", "005_Neutral_4_x_1_0_3_Angry", "005_Neutral_4_x_1_0_5_Angry",
+    "004_Neutral_3_x_1_0_1_Old", "004_Neutral_3_x_1_0_2_Old", "004_Neutral_3_x_1_0_3_Old", "004_Neutral_3_x_1_0_5_Old", "004_Neutral_3_x_1_0_8_Old", "005_Neutral_4_x_1_0_1_Old", "005_Neutral_4_x_1_0_2_Old", "005_Neutral_4_x_1_0_3_Old", "005_Neutral_4_x_1_0_5_Old",
+    "004_Neutral_3_x_1_0_1_Speech", "004_Neutral_3_x_1_0_2_Speech", "004_Neutral_3_x_1_0_3_Speech", "004_Neutral_3_x_1_0_5_Speech", "004_Neutral_3_x_1_0_8_Speech", "005_Neutral_4_x_1_0_1_Speech", "005_Neutral_4_x_1_0_2_Speech", "005_Neutral_4_x_1_0_3_Speech", "005_Neutral_4_x_1_0_5_Speech"]
+
     let attn_1 = getRandomArbitrary(4,10);
     let attn_2 = getRandomArbitrary(13,18);
-    let videodir = 'zeg_pref_comb'
+    let videodir = 'zeg_style_comb'
+
     for (i=0;i<pairs.length;i++) {
-        for (j=0;j<6;j++) {
+        for (j=0;j<12;j++) {
             pairlist.push(pairs[i])
         }
     }

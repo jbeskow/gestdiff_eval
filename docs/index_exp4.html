@@ -60,7 +60,7 @@
             width: 1000,
             response_allowed_while_playing: false,
             prompt: prompt,
-            choices: ['clearly the left one','probably the left one','i can not tell','prbably the right one', 'clearly the right one'],
+            choices: ['clearly the left one','probably the left one','i can not tell','probably the right one', 'clearly the right one'],
             on_finish: function () {
                 url = data_submit_url;
                 jsPsychSheet.uploadPartialData(url, jsPsych.data.get().csv())
