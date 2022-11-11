@@ -129,18 +129,17 @@ print(json.dumps(audios))
 for f1,f2,comb in combos:
     print(f1,f2,comb)
     sequential_side_by_side(os.path.join(indir,f1),os.path.join(indir,f2),os.path.join(outdir,comb))
-
 '''
 
 # EXP=3 zeroeggs preference
     
-indir='xxx'
+indir='zeg_pref'
 audiolist = sys.argv[1]
 outdir = sys.argv[2]
 audios = open(audiolist).read().strip().split('\n')
-print('audios:'audios)
-systems = open('tsg/systems.txt').read().strip().split('\n')
-print('systems:'audios)
+print('audios:',audios)
+systems = open(indir + '/systems.txt').read().strip().split('\n')
+print('systems:',systems)
 combos,pairlist = get_pairs(audios,systems)
 
 
@@ -152,4 +151,5 @@ print(json.dumps(audios))
 for f1,f2,comb in combos:
     print(f1,f2,comb)
     sequential_side_by_side(os.path.join(indir,f1),os.path.join(indir,f2),os.path.join(outdir,comb))
+
 
