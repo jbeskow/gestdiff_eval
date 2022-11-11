@@ -129,7 +129,7 @@ print(json.dumps(audios))
 for f1,f2,comb in combos:
     print(f1,f2,comb)
     sequential_side_by_side(os.path.join(indir,f1),os.path.join(indir,f2),os.path.join(outdir,comb))
-'''
+
 
 # EXP=3 zeroeggs preference
     
@@ -140,6 +140,31 @@ audios = open(audiolist).read().strip().split('\n')
 print('audios:',audios)
 systems = open(indir + '/systems.txt').read().strip().split('\n')
 print('systems:',systems)
+combos,pairlist = get_pairs(audios,systems)
+
+
+print(len(pairlist))
+print(json.dumps(pairlist))
+print(len(audios))
+print(json.dumps(audios))
+
+for f1,f2,comb in combos:
+    print(f1,f2,comb)
+    sequential_side_by_side(os.path.join(indir,f1),os.path.join(indir,f2),os.path.join(outdir,comb))
+'''
+
+
+# EXP=4 zeroeggs style
+    
+indir='zeg_style'
+audiolist = indir + '/audios.txt'
+style = sys.argv[1]
+outdir = sys.argv[2]
+audios = open(audiolist).read().strip().split('\n')
+print('audios:',audios)
+systems = open(indir + '/systems.txt').read().strip().split('\n')
+print('systems:',systems)
+audios = [x + '_' + style for x in audios]
 combos,pairlist = get_pairs(audios,systems)
 
 
