@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Virtual Gesturing</title>
+    <script src="https://unpkg.com/jspsych@7.2.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-button-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-browser-check@1.0.1"></script>
+
+    <script src="utilities.js"></script>
+    <link href="https://unpkg.com/jspsych@7.2.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+
+    <!-- jsPsychSheet library -->
+    <script src="jspsychsheet.js"></script>
+    <link rel="stylesheet" href="jspsychsheet.css" />
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<body></body>
+<script>
+
+    var data_submit_url = "https://script.google.com/macros/s/AKfycbzcW6-6OCmsuDfbOlzvvFZwqHyNxCpz58wUNR4foQeRsjjQ23R0iLXLP1jKPTlWkI5sFw/exec";
+    var success_url = "https://app.prolific.co/submissions/complete?cc=CZYL0K52";    
+    var incompatible_device_url = "https://app.prolific.co/submissions/complete?cc=C1LQ71PJ";
+    var no_concent_url = "https://app.prolific.co/submissions/complete?cc=CORSE8ZV";
+
+    var jsPsych = initJsPsych({
+        show_progress_bar: true,
+        override_safe_mode: true,
+        on_finish: function () {
+            url = data_submit_url;
+            jsPsychSheet.uploadData(url, jsPsych.data.get().csv())
+            window.location.href = success_url;
+        }
+    })
+
+    var subject_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+    var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+    var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+
+    jsPsych.data.addProperties({
+        subject_id: subject_id,
+        study_id: study_id,
+        session_id: session_id,
+        experiment: 3
+    });
+
+    function get_block_exp1(vidfile) {
+  
+        var trial = {
+            type: jsPsychVideoButtonResponse,
+            controls: true,
+            stimulus: [vidfile],
+            width: 1000,
+            response_allowed_while_playing: false,
+            prompt: '<h2>Which character\'s motion do you prefer, taking into account both <b>how natural-looking</b><br>the motion is and <b>how well it matches the speech rhythm and intonation</b>?</h2>',
+            choices: ['clear preference for <b>left</b>','slight preference for <b>left</b>','<b>no</b> preference','slght preference for <b>right</b>','clear preference for <b>right</b>'],
+            on_finish: function () {
+                url = data_submit_url;
+                jsPsychSheet.uploadPartialData(url, jsPsych.data.get().csv())
+            }            
+        }      
+        return trial
+    }
+ 
+    //
+
+    let timeline = [];
+    var instructions = ''
+
+
+    instructions = `
+<div class="container">
+            <div class="jumbotron">
+        <ol>
+
+        <li>In this experiment you will see pairs of videos of animated characters that gesticulate while talking.</li>
+        <li>Your task is to compare two characters with different motion but the same speech, and indicate <b>which one you prefer</b>, taking into account 
+            how well the gestures match the speech rhythm and intonation, and how natural-looking the motion is. Please watch every video in full. 
+        <li>You will indicate your preference using a set of buttons, that will be enabled after watching every video in full.</li>
+        <li>Audio is required for this task; please use headphones.</li>
+        <li>There are occasional <b>attention checks</b> inserted into the task. You must comply with their instructions when you find them or you will be disqualified without pay.</li>
+        </ol>
+        <p> <center> This test does not collect any personally identifiable information and please send a message on Prolific if you encounter any issues. </center> </p>
+</div>
+</div>
+`;
+
+
+    let pairlist = []
+    let pairs = ['GDS-ZE','GDSg1p5-GDS','GDSg1p5-ZE'] //["GDS_000-GT","GDS_000-ZE","GT-ZE"]
+    let audios = ['004_Neutral_3_x_1_0_1', '004_Neutral_3_x_1_0_2', '004_Neutral_3_x_1_0_3', '004_Neutral_3_x_1_0_5', '004_Neutral_3_x_1_0_8', '005_Neutral_4_x_1_0_1', '005_Neutral_4_x_1_0_2', '005_Neutral_4_x_1_0_3', '005_Neutral_4_x_1_0_5', '005_Neutral_4_x_1_0_6', '005_Neutral_4_x_1_0_7', '005_Neutral_4_x_1_0_8']
+    let styles = ['Happy','Angry','Old','Speech']
+
+    let attn_1 = getRandomArbitrary(4,10);
+    let attn_2 = getRandomArbitrary(13,18);
+    let videodir = 'zeg_style_comb'
+
+    for (i=0;i<pairs.length;i++) {
+        for (j=0;j<styles.length;j++) {
+            pairlist.push(styles[j] + '-' + pairs[i])
+        }
+    }
+    pairlist = shuffle(pairlist)
+    console.log(audios.length)
+    console.log(pairlist.length)
+    
+    vids = []
+    for (i=0;i<audios.length;i++) {
+        var variant = (i%2?"A":"B")
+        var vidfile = videodir + '/' + audios[i] + "_" + pairlist[i] + "-" + variant + ".mp4"
+        timeline.push(get_block_exp1(vidfile))
+        vids.push(vidfile)
+    }
+
+    attn_1_block = get_block_exp1('attn/attention3.mp4')
+    attn_2_block = get_block_exp1('attn/attention4.mp4')
+    console.log(vids)
+
+    let end_test = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `<p>You've completed the test. Thank you for participating!</p>
+  <p>Press any key to return to Prolific and complete the study</p>`,
+        on_finish: function () {
+            url = data_submit_url;
+            data = jsPsych.data.get();
+            data['trials'][data['trials'].length - 1]['date_time'] = new Date().toLocaleString(); jsPsychSheet.uploadPartialData(url, data.csv())
+
+        }
+    };
+
+    let instruction_screen = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: instructions,
+        choices: ['I agree to participate proceed to the study', 'I do not agree to participate take me back to Prolific'],
+        button_html: ['<button class="jspsych-btn agreebutton">%choice%</button>', '<button class="jspsych-btn diagreebutton">%choice%</button>'],
+        prompt: "",
+        on_finish: function () {
+            url = data_submit_url;
+            data = jsPsych.data.get();
+            data['trials'][data['trials'].length - 1]['date_time'] = new Date().toLocaleString();
+            jsPsychSheet.uploadPartialData(url, data.csv())
+            if (data['trials'][data['trials'].length - 1]['response'] == 1) {
+                window.location.href = no_concent_url;
+            }
+        }
+    };
+
+    let inital_confirm_headpdhones = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<h2> Are you using headphones right now? </h2>',
+        choices: ['Yes', 'No'],
+        button_html: ['<button class="jspsych-btn agreebutton">%choice%</button>', '<button class="jspsych-btn diagreebutton">%choice%</button>'],
+        prompt: "",
+        on_finish: function () {
+            url = data_submit_url;
+            data = jsPsych.data.get();
+            data['trials'][data['trials'].length - 1]['date_time'] = new Date().toLocaleString();
+            jsPsychSheet.uploadPartialData(url, data.csv())
+            if (data['trials'][data['trials'].length - 1]['response'] == 1) {
+                window.location.href = incompatible_device_url;
+            }
+        }
+    };
+
+    let confirm_headpdhones = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<h2> Were you wearing <b> headphones </b> for the <b>entire duration </b> of this test? </h2>',
+        choices: ['Yes', 'No'],
+        button_html: ['<button class="jspsych-btn agreebutton">%choice%</button>', '<button class="jspsych-btn diagreebutton">%choice%</button>'],
+        prompt: "",
+        on_finish: function () {
+            url = data_submit_url;
+            data = jsPsych.data.get();
+            data['trials'][data['trials'].length - 1]['date_time'] = new Date().toLocaleString();
+            jsPsychSheet.uploadPartialData(url, data.csv());
+        }
+    };
+
+    let browser_check = {
+        type: jsPsychBrowserCheck,
+        inclusion_function: (data) => {
+            return data.mobile === false
+        },
+        exclusion_message: (data) => {
+            if (data.mobile) {
+                return '<p>You must use a desktop/laptop computer to participate in this experiment.</p>';
+            }
+        },
+        on_finish: function () {
+            url = data_submit_url;
+            data = jsPsych.data.get();
+            data['trials'][data['trials'].length - 1]['date_time'] = new Date().toLocaleString(); jsPsychSheet.uploadPartialData(url, data.csv())
+            if (jsPsych.data.get()['trials'][0]['response'] == 1) {
+                window.location.href = incompatible_device_url;
+            }
+        }
+    };
+
+
+    var timeline_all = [browser_check, instruction_screen, inital_confirm_headpdhones];
+    timeline_all = timeline_all.concat(jsPsych.randomization.shuffle(timeline));
+    timeline_all.splice(attn_1, 0, attn_1_block);
+    timeline_all.splice(attn_2, 0, attn_2_block);
+    timeline_all = timeline_all.concat([confirm_headpdhones, end_test]);
+
+    jsPsych.run(timeline_all);
+</script>
+
+</html>
